@@ -6,7 +6,7 @@
 ## Installation
 * Clone the repository.
 * Run npm install to install the required dependencies.
-* Rename .env.example to .env and fill in the required variables, including the database connection details.
+* Rename .env.example to .env and fill in the required variables, including the local database connection details.
 
 ## Usage
 * Run npm start to start the server.
