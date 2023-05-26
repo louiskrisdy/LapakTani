@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- <script src="/send_url.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <!-- font -->
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <!-- alert message for incorrect password -->
+    <% if(locals.message)  { %>
+      <div class="alert alert-<%= locals.message.type %> alert-dismissible fade show" role="alert" style="text-align: center" >
+        <strong><%= locals.message.intro %></strong> <%= locals.message.message %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> 
+    <% } %>
+    <!-- end of alert message for incorrect password -->
+
+    <%- include('header'); %>
+
+    <!-- login/register form -->
+    <section class="login-page text-light">
+      <div class="cont mt-5">
+        <input id="register_toggle" type="checkbox">
+        <div class="slider">
+          
+          <!-- sign in -->
+          <form class="form-loginPage" action="/login" method="post">
+            <span class="title">Login</span>
+            <div class="form_control">
+              <input required="" class="input" type="email" name="email">
+              <label class="label">Email</label>
+            </div>
+            <div class="form_control">
+              <input required="" class="input" id="password-login" type="password" name="password">
+              <label class="label">Password</label>
+              <span class="fa fa-eye-slash toggle-password" data-target="password-login" ></span>
+            </div>
+            <button type="submit">Login</button>
+      
+            <span class="bottom_text">Don't have an account? 
+              <label class="switch" for="register_toggle">Sign Up</label> 
+            </span>
+          </form>
+          <!-- end of sign in form -->
+
+          <!-- sign up -->
+          <form class="form-loginPage" action="/signup" method="post">
+            <span class="title">Sign Up</span>
+            <div class="form_control">
+              <input required="" class="input" type="text" name="username">
+              <label class="label">Full name</label>
+            </div>
+            <div class="form_control">
+              <input required="" class="input" type="email" name="email">
+              <label class="label">Email</label>
+            </div>
+            <div class="form_control">
+              <input required="" class="input" id="password-signup" type="password" name="password">
+              <label class="label">Password</label>
+              <span class="fa fa-eye-slash toggle-password" data-target="password-signup" ></span>
+            </div>
+            <button type="submit"><span>Sign Up</span></button>
+      
+            <span class="bottom_text">Already have an account? 
+              <label class="switch" for="register_toggle">Sign In</label> 
+            </span>
+          </form>
+          <!-- end of sign up form -->
+          </div>
+      </div>
+    </section>
+    <!-- end of login/register form -->
+
+    <%- include('footer'); %>
+</body>
+</html>
+<script>
+
+  var togglePasswordIcons = document.getElementsByClassName("toggle-password");
+
+  for (var i = 0; i < togglePasswordIcons.length; i++) {
+    togglePasswordIcons[i].addEventListener("click", function() {
+      var targetId = this.getAttribute("data-target");
+      var passwordField = document.getElementById(targetId);
+      var icon = this;
+
+      if (passwordField.type === "password") {
+        passwordField.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      } else {
+        passwordField.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      }
+    });
+  }
+
+
+</script>

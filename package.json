@@ -1,0 +1,31 @@
+{
+  "name": "lapaktani",
+  "version": "1.0.0",
+  "description": "## Prerequisites * Node.js installed on your machine. * MySQL database installed on your machine or available through a remote connection.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "\"Louis Krisdy D\"",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "bootstrap": "^5.2.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jquery": "^3.6.4",
+    "mssql": "^9.1.1",
+    "mysql": "^2.18.1",
+    "swagger-ui-express": "^4.6.3",
+    "tedious": "^16.1.0",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.21"
+  },
+  "keywords": []
+}

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- <script src="/send_url.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- font -->
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <%- include('header'); %>
+
+    <section class="prod-page-content d-flex flex-row mb-4">
+        <div class="container-fluid col-8">
+        <!-- filter bar for products -->
+
+        <form class="filter justify-content-center align-content-center align-items-center text-center d-flex flex-wrap mt-4" action="/filter_products" method="post">
+            <div class="filter-button mx-3">
+              <% if(locals.category == 'ALL' || locals.category == 'notFiltered') { %>
+                <input class="filterBtn btn" type="submit" name="product_category" value="ALL" style="text-decoration: underline;" />
+              <% } else { %>
+                <input class="filterBtn btn btn-light" type="submit" name="product_category" value="ALL" />
+              <% }; %>
+            </div>
+            <div class="filter-button mx-3">
+              <% if(locals.category.toLowerCase() == 'fruits') { %>
+                <input class="filterBtn btn" type="submit" name="product_category" value="FRUITS" style="text-decoration: underline;" />
+              <% } else { %>
+                <input class="filterBtn btn btn-light" type="submit" name="product_category" value="FRUITS" />
+              <% }; %>
+            </div>
+            <div class="filter-button mx-3">
+              <% if(locals.category.toLowerCase() == 'poultry') { %>
+                <input class="filterBtn btn" type="submit" name="product_category" value="POULTRY" style="text-decoration: underline;" />
+              <% } else { %>
+                <input class="filterBtn btn btn-light" type="submit" name="product_category" value="POULTRY" />
+              <% }; %>
+            </div>
+            <div class="filter-button mx-3">
+              <% if(locals.category.toLowerCase() == 'veggies') { %>
+                <input class="filterBtn btn" type="submit" name="product_category" value="VEGGIES" style="text-decoration: underline;" />
+              <% } else { %>
+                <input class="filterBtn btn btn-light" type="submit" name="product_category" value="VEGGIES" />
+              <% }; %>
+            </div>
+            <div class="filter-button mx-3">
+              <% if(locals.category == 'OTHERS') { %>
+                <input class="filterBtn btn" type="submit" name="product_category" value="OTHERS" style="text-decoration: underline;" />
+              <% } else { %>
+                <input class="filterBtn btn btn-light" type="submit" name="product_category" value="OTHERS" />
+              <% }; %>
+            </div>
+          </form>
+          
+
+        <!-- end of filter bar for products -->
+
+            <!-- Product list -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <% products.forEach(product => { %>
+                            <div class="col-lg-4 col-md-6 mb-5  text-center">
+                                <img src="/images/<%= product.imagePath %>" class="img-thumbnail mb-3" />
+                                <h4><b><%= product.name %></b></h4>
+                                <h3 class="text-danger">Rp <%= product.price %></h3>
+                                <form method="post" action="/add_cart">
+                                    <input type="hidden" name="product_id" value="<%= product.id %>" />
+
+                                    <input type="hidden" name="product_name" value="<%= product.name %>" />
+
+                                    <input type="hidden" name="product_price" value="<%= product.price %>" />
+
+                                    <input type="submit" class="addToCartButton" value="Add to Cart" />
+                                </form>
+                            </div>
+                            
+
+                            <% }) %>
+                    </div>
+                </div>
+            </div>
+            <!-- End of product list -->
+        </div>
+
+
+        <!-- Shopping cart -->
+        <div class="cart container-fluid col-md-4 col-sm-8 col-xs-12 justify-content-center align-content-center align-items-center text-center mt-4">
+            <div class="cart-header">
+                <span>Shopping Cart</span>
+                <span class="fa fa-shopping-cart"></span>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Item name</th>
+                            <th>Qty</th>
+                            <th>Price /qty</th>
+                            <th>Total price</th>
+                            <th>Remove</th>
+                        </tr>
+                        <%
+                        if(cart.length > 0)
+                        {
+                            let total = 0;
+
+                            cart.forEach(item => {
+                        %>
+                        <tr>
+                            <td><%= item.product_name %></td>
+                            <td><%= item.quantity %></td>
+                            <td><%= item.product_price %></td>
+                            <td><%= parseFloat(item.quantity) * parseFloat(item.product_price) %></td>
+                            <td><button type="button" class="btn btn-danger btn-sm" onclick="remove_item(<%= item.product_id %>)">Remove</button></td>
+                        </tr>
+                        <%
+                        total += parseFloat(item.quantity) * parseFloat(item.product_price);
+                        })
+                        %>
+                        <tr>
+                            <td colspan="3"><b>Total</b></td>
+                            <td><%= total %></td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr><td colspan="5" align="right" style="border-top: none;"><br><button type="submit" onclick="promptNegotiate(<%= total %>)">Checkout</button></td></tr>
+                        <%
+                        }
+                        else
+                        {
+                        %>
+
+                        <tr>
+                            <td colspan="5" aling="center">No Item Found in Cart</td>
+                        </tr>
+
+                        <%
+                        }
+                        %>
+                    </table>
+                </div>
+            </div>
+            <!-- end of shopping cart -->
+            <!-- Order Details -->
+            <div class="mt-5 cart-header">
+                <span>Order Details</span>
+                <!-- <span class="fa fa-shopping-cart"></span> -->
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Item name</th>
+                            <th>Qty</th>
+                            <th>Total price</th>
+                        </tr>
+                        <!-- <%
+                        if(cart.length > 0)
+                        {
+                            let total = 0;
+
+                            cart.forEach(item => {
+                        %>
+                        <tr>
+                            <td><%= item.product_name %></td>
+                            <td><%= item.quantity %></td>
+                            <td><%= item.product_price %></td>
+                            <td><%= parseFloat(item.quantity) * parseFloat(item.product_price) %></td>
+                            <td><button type="button" class="btn btn-danger btn-sm" onclick="remove_item(<%= item.product_id %>)">Remove</button></td>
+                        </tr>
+                        <%
+                        total += parseFloat(item.quantity) * parseFloat(item.product_price);
+                        })
+                        %>
+                        <tr>
+                            <td colspan="3"><b>Total</b></td>
+                            <td><%= total %></td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr><td colspan="5" align="right" style="border-top: none;"><br><button>Checkout</button></td></tr>
+                        <%
+                        }
+                        else
+                        {
+                        %>
+
+                        <tr>
+                            <td colspan="5" aling="center">No orders</td>
+                        </tr>
+
+                        <%
+                        }
+                        %> -->
+                    </table>
+                </div>
+                <!-- end of order details -->
+            </div>
+        </div>
+    </section>
+    
+    
+
+
+    <%- include('footer'); %>
+</body>
+</html>
+<script>
+
+    function remove_item(item_id)
+    {
+        if(confirm("Are you sure you want to remove it?"))
+        {
+            window.location.href = `/remove_item?id=${item_id}`;
+        }
+    }
+
+    function negotiationStatus(total, negotiatePrice)
+    {
+        if(negotiatePrice < (0.3 * total)) {
+            alert("Negotiation price declined!");
+            promptNegotiate(total);
+        
+        }
+        else
+        {
+            alert("Negotiation price accepted!");
+            alert("Redirecting to payment page...");
+            window.location.href = '/checkout';
+        }
+    }
+
+    function promptNegotiate(total)
+    {
+        if(total >= 50000)
+        {
+            if(confirm("Your total price is negotiable. Do you wish to negotiate the total price?"))
+            {
+                var negotiatePrice = prompt("Please enter the desired price");
+                if(negotiatePrice) 
+                {
+                    alert("Thank you for negotiating with us! Your initial price are being considered right now. Please wait a moment to get your negotiation status... ");
+                    negotiationStatus(total, negotiatePrice);
+                }
+                else
+                {
+                    alert("Redirecting to payment page...");
+                    window.location.href = '/checkout';
+                }
+                // alert("Redirecting to payment page...");
+                // window.location.href = '/checkout';
+            } 
+            else 
+            {
+                alert("Redirecting to payment page...");
+                window.location.href = '/checkout';
+            }
+        }
+        else 
+        {
+            if(confirm("Your total price is not negotiable. Do you wish to continue for payment?"))
+            {
+                alert("Redirecting to payment page...");     
+                window.location.href = '/checkout';         
+            }
+        }
+    }
+
+</script>

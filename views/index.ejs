@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LapakTani</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- <script src="/send_url.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- font -->
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <%- include('header'); %>
+    <!-- scroll to top button -->
+    <button onclick="topFunction()" id="myBtn" title="Go to top"></button>
+    <!-- end of scroll to top button -->
+
+    <!-- Homepage Banner -->
+    <section class="home-banner d-flex flex-column justify-content-around">
+        <div class="home-banner-wrapper d-flex align-items-center justify-content-around">
+            <div class="home-banner-logo d-flex">
+                <h1 class="home-banner-logo-text">LapakTani</h1>
+            </div>
+            <div class="home-banner-text">
+                <div class="desc-text">
+                    <p>Your sustainable path<br>to the local farm products.</p>
+                </div>
+                <div class="link-to-aboutUs">
+                    <button class="cta">
+                        <span><a class="text-decoration-none" href="/aboutUs">View more about us </a></span>
+                        <svg viewBox="0 0 13 10" height="10px" width="15px">
+                          <path d="M1,5 L11,5"></path>
+                          <polyline points="8 1 12 5 8 9"></polyline>
+                        </svg>
+                      </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of Homepage Banner -->
+
+    <!-- Homepage Product Section -->
+    <section class="container d-flex justify-content-center mt-5">
+        <div class="products-homepage">
+            <div class="prod-hp-header text-center align-content-center">
+                <h1>Products</h1>
+            </div>
+            <div class="ph-content-wrapper d-flex flex-row mt-5">
+                <div class="prod-card d-flex align-items-center mx-lg-5 mx-md-4 mx-sm-4">
+                    <div class="card-img">
+                        <img src="/images/julia-zolotova-M_xIaxQE3Ms-unsplash 1.png" alt="fruits">
+                    </div>
+                    <div class="prod-text position-absolute">
+                        <h2>FRUITS</h2>
+                    </div>
+                </div>
+                <div class="prod-card d-flex align-items-center mx-lg-5 mx-md-4 mx-sm-4">
+                    <div class="card-img">
+                        <img src="/images/0418np_bizstrat 1.png" alt="fruits">
+                    </div>
+                    <div class="prod-text position-absolute">
+                        <h2>POULTRY</h2>
+                    </div>
+                </div>
+                <div class="prod-card d-flex align-items-center mx-lg-5 mx-md-4 mx-sm-4">
+                    <div class="card-img">
+                        <img src="/images/elianna-friedman-4jpNPu7IW8k-unsplash 1.png" alt="fruits">
+                    </div>
+                    <div class="prod-text position-absolute">
+                        <h2>VEGGIES</h2>
+                    </div>
+                </div>
+                <div class="prod-card d-flex align-items-center mx-lg-5 mx-md-4 mx-sm-4">
+                    <div class="card-img">
+                        <img src="images/anne-preble-SAPvKo12dQE-unsplash 1.png" alt="fruits">
+                    </div>
+                    <div class="prod-text position-absolute">
+                        <h2>OTHERS</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="link-to-prodPage text-right mt-5 mb-5">
+                <button class="cta">
+                    <span><a class="text-dark text-decoration-none" href="/products">View products</a></span>
+                    <svg viewBox="0 0 13 10" height="10px" width="15px" style="stroke: black;">
+                      <path d="M1,5 L11,5"></path>
+                      <polyline points="8 1 12 5 8 9"></polyline>
+                    </svg>
+                  </button>
+            </div>
+        </div>
+    </section>
+    <!-- End of Homepage Product Section -->
+    <%- include('footer'); %>
+
+    <!-- Go to top button script -->
+    <script>
+    // Get the button
+    var myButton = document.getElementById("myBtn");
+    
+    window.onscroll = function() {
+      scrollFunction();
+    };
+    
+    function scrollFunction() {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        myButton.classList.add("show");
+      } else {
+        myButton.classList.remove("show");
+      }
+    }
+    
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+        });
+    }
+    </script>
+    <!-- end of the go top button script -->
+</body>
+</html>
+
