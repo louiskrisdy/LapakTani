@@ -227,7 +227,16 @@
     {
         if(negotiatePrice < (0.3 * total)) {
             alert("Negotiation price declined!");
-            promptNegotiate(total);
+            if(confirm("Do you wish to have a chat with the seller?")) 
+            {
+                window.location.href = '/get_idChat';
+            }
+            else 
+            {
+                alert("Redirecting to payment page...");
+                window.location.href = '/checkout';
+            }
+            // promptNegotiate(total);
         
         }
         else
@@ -255,8 +264,7 @@
                     alert("Redirecting to payment page...");
                     window.location.href = '/checkout';
                 }
-                // alert("Redirecting to payment page...");
-                // window.location.href = '/checkout';
+             
             } 
             else 
             {

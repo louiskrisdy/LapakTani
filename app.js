@@ -1,10 +1,14 @@
 const express = require('express');
+var http = require('http');
+const app = express();
+var server = http.createServer(app);
 const mysql = require('mysql');
 const port = process.env.PORT || 3000; 
 const session = require('express-session');
 const bcrypt = require('bcrypt'); //hashing passwords for security
-const app = express();
 require('dotenv').config()
+var io = require('socket.io')(server);
+
 
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: false}));
@@ -406,4 +410,41 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.listen(port);
+var name;
+io.on('connection', (socket) => {
+  console.log("New user connected");
+
+  socket.on('joining msg', (username) => {
+    name = username;
+    io.emit('chat message', `---${name} joined the chat---`);
+
+  });
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+    io.emit('chat message', `---${name} left the chat---`);
+    
+  });
+  socket.on('chat message', (msg) => {
+    socket.broadcast.emit('chat message', msg);         //sending message to all except the sender
+  });
+});
+
+app.post("/get_idChat", (req, res) => {
+  req.session.idChat = Math.floor(Math.random() * (100000000 - 1 + 1)) + 1;
+  res.redirect('chat.ejs');
+})
+
+app.get("/chat", (req, res) => {
+  console.log(req.session.idChat);
+  if(!req.session.idChat) {
+    res.render('404.ejs');
+  }
+  else {
+    res.render('chat.ejs');
+  }
+});
+
+server.listen(port, () => {
+  console.log('Server listening on :3000');
+});
+// app.listen(port);
