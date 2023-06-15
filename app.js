@@ -1,10 +1,12 @@
 const express = require('express');
+const app = express();
 const mysql = require('mysql');
 const port = process.env.PORT || 3000; 
 const session = require('express-session');
 const bcrypt = require('bcrypt'); //hashing passwords for security
-const app = express();
+const { randomInt } = require('crypto');
 require('dotenv').config()
+
 
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: false}));
@@ -67,6 +69,7 @@ app.use((req, res, next) => {
   if (req.session.userId === undefined) {
     res.locals.isLoggedIn = false;
   } else {
+    console.log(req.session.userId);
     res.locals.username = req.session.username;
     res.locals.isLoggedIn = true;
   }
@@ -91,61 +94,47 @@ app.get('/products', (req, res) => {
   }
   const category = req.session.category;
   res.locals.category = category;
-  // if(req.session.category === 'notFiltered' || req.session.category === 'ALL') {
-  //   const query = 'SELECT * FROM products';
-  //   const request = new sql.Request();
 
-  //   request.query(query, (error, result) => {
-  //     if (error) {
-  //       console.error('Error executing query:', error);
-  //       return;
-  //     }
-  //     if(!req.session.cart)
-  //     {
-  //       req.session.cart = [];
-  //     }
-  //     // console.log(result);
-  //     res.render('products.ejs', { products : result.recordset, cart : req.session.cart });
-  
-  //   });
-  // }
   if(req.session.category === 'notFiltered' || req.session.category === 'ALL') {
     const query = 'SELECT * FROM products';
-    connection.query(query, (error, result) => {
+    connection.query(query, (error, result1) => {
       if(!req.session.cart)
       {
         req.session.cart = [];
       }
-      // console.log(result);
-      res.render('products.ejs', { products : result, cart : req.session.cart });
+      if(!req.session.order_details) {
+        req.session.order_details = [];
+      }
+      connection.query('SELECT * FROM order_details', (error, result) => {
+        if (error) {
+          console.error('Failed to get order details', error);
+          return res.status(500).send('Failed');
+        }
+        req.session.order_details = result;
+        res.render('products.ejs', { products : result1, cart : req.session.cart, orders : req.session.order_details });
+      })
   
     });
   }
   else{
-    // console.log(category);
-    // const request = new sql.Request();
-    // request.input('category', sql.NVarChar, category);
-
-    // request.query(
-    //   'SELECT * FROM products WHERE category = @category', (error, result) => {
-
-    //   if(!req.session.cart)
-    //   {
-    //     req.session.cart = [];
-    //   }
-    //   // console.log(result);
-    //   res.render('products.ejs', { products : result.recordset, cart : req.session.cart });
   
-    // });
     connection.query('SELECT * FROM products WHERE category = ?',
-    [category], (error, result) => {
-
+    [category], (error, result1) => {
       if(!req.session.cart)
       {
         req.session.cart = [];
       }
-      // console.log(result);
-      res.render('products.ejs', { products : result, cart : req.session.cart });
+      if(!req.session.order_details) {
+        req.session.order_details = [];
+      }
+      connection.query('SELECT * FROM order_details', (error, result) => {
+        if (error) {
+          console.error('Failed to get order details', error);
+          return res.status(500).send('Failed');
+        }
+        req.session.order_details = result;
+        res.render('products.ejs', { products : result1, cart : req.session.cart, orders : req.session.order_details });
+      })
   
     });
   }
@@ -160,9 +149,41 @@ app.post('/filter_products', (req, res) => {
 
 });
 
+
 app.get('/checkout', (req, res) => {
-  req.session.cart = [];
-  res.redirect('/products');
+  req.session.orderID = null;
+
+  connection.query('SELECT id FROM order_details ORDER BY id DESC LIMIT 1', (error, result) => {
+    if (error) {
+      console.error('Failed to retrieve order ID', error);
+      return res.status(500).send('Failed');
+    }
+
+    if (result.length > 0) {
+      req.session.orderID = result[0].id + 1;
+    } else {
+      req.session.orderID = 1; // If no orders exist, start from 1
+    }
+
+    // Insert order details for each item in the cart
+    for (let i = 0; i < req.session.cart.length; i++) {
+      const cartItem = req.session.cart[i];
+      const total_price = cartItem.product_price * cartItem.quantity;
+
+      connection.query(
+        'INSERT INTO order_details (id, item_name, total_price, product_id, qty) VALUES (?, ?, ?, ?, ?)',
+        [req.session.orderID, cartItem.product_name, total_price, cartItem.product_id, cartItem.quantity],
+        (error, result) => {
+          if (error) {
+            console.error('Failed to insert order details', error);
+            return res.status(500).send('Failed');
+          }
+        }
+      );
+    }
+    req.session.cart = [];
+    res.redirect('/products');
+  });
 });
 
 app.post('/add_cart', (req, res) => {
@@ -405,5 +426,17 @@ app.get('/logout', (req, res) => {
       res.redirect('/');
     });
 });
+
+app.get("/for-farmer", (req, res) => {
+  farmerID = 2;
+  // console.log(farmerID);
+  connection.query('SELECT * FROM products where farmerID = ?',
+  [farmerID], (error, result) => {
+
+    // console.log(result);
+    res.render('farmer.ejs', { products : result });
+
+  });
+})
 
 app.listen(port);

@@ -325,6 +325,14 @@ footer {
   background: rgb(74, 169, 108, 0.05);
 }
 
+.footer {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 200px;
+  background: rgb(74, 169, 108, 0.05);
+}
+
 #myBtn {
   display: block;
   position: fixed;
@@ -554,6 +562,10 @@ form .form_control .input:valid + .label {
 
 .line {
   border: 1px solid #000000;
+}
+
+.farmer-content-wrapper {
+  margin-bottom: 5rem;
 }
 
 @media (max-width: 768px) {

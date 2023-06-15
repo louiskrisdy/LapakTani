@@ -163,30 +163,22 @@
                             <th>Qty</th>
                             <th>Total price</th>
                         </tr>
-                        <!-- <%
-                        if(cart.length > 0)
+                        <%
+                        if(orders.length > 0)
                         {
                             let total = 0;
 
-                            cart.forEach(item => {
+                            orders.forEach(item => {
                         %>
                         <tr>
-                            <td><%= item.product_name %></td>
-                            <td><%= item.quantity %></td>
-                            <td><%= item.product_price %></td>
-                            <td><%= parseFloat(item.quantity) * parseFloat(item.product_price) %></td>
-                            <td><button type="button" class="btn btn-danger btn-sm" onclick="remove_item(<%= item.product_id %>)">Remove</button></td>
+                            <td><%= item.id %></td>
+                            <td><%= item.item_name %></td>
+                            <td><%= item.qty %></td>
+                            <td><%= item.total_price %></td>
                         </tr>
                         <%
-                        total += parseFloat(item.quantity) * parseFloat(item.product_price);
                         })
                         %>
-                        <tr>
-                            <td colspan="3"><b>Total</b></td>
-                            <td><%= total %></td>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr><td colspan="5" align="right" style="border-top: none;"><br><button>Checkout</button></td></tr>
                         <%
                         }
                         else
@@ -199,7 +191,7 @@
 
                         <%
                         }
-                        %> -->
+                        %>
                     </table>
                 </div>
                 <!-- end of order details -->
@@ -227,7 +219,16 @@
     {
         if(negotiatePrice < (0.3 * total)) {
             alert("Negotiation price declined!");
-            promptNegotiate(total);
+            if(confirm("Do you wish to have a chat with the seller?")) 
+            {
+                window.location.href = '/get_idChat';
+            }
+            else 
+            {
+                alert("Redirecting to payment page...");
+                window.location.href = '/checkout';
+            }
+            // promptNegotiate(total);
         
         }
         else
@@ -255,8 +256,7 @@
                     alert("Redirecting to payment page...");
                     window.location.href = '/checkout';
                 }
-                // alert("Redirecting to payment page...");
-                // window.location.href = '/checkout';
+             
             } 
             else 
             {
