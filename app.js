@@ -418,4 +418,8 @@ app.get("/for-farmer", (req, res) => {
   });
 })
 
+app.get("/404", (req, res) => {
+  res.render("404.ejs");
+})
+
 app.listen(port);
