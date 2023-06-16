@@ -323,19 +323,7 @@ app.post('/signup',
     console.log('Checking duplicate email');
     const email = req.body.email;
     const errors = [];
-    // const request = new sql.Request();
-    // request.input('email', sql.NVarChar, email);
-    // request.query(
-    //   `SELECT * FROM user_data WHERE email = @email`,
-    //     (error, results) => {
-    //       if (results.recordset.length > 0) {
-    //         errors.push('Failed to register user');
-    //         res.render('login.ejs', { errors: errors });
-    //       } else {
-    //         next();
-    //       }
-    //     }
-    //   );    
+
     connection.query(
       'SELECT * FROM user_data WHERE email = ?',
       [email],
@@ -355,21 +343,6 @@ app.post('/signup',
     const email = req.body.email;
     const password = req.body.password;
     bcrypt.hash(password, 10, (error, hash) => {
-      // const request = new sql.Request();
-      // request.input('username', sql.NVarChar, username);
-      // request.input('email', sql.NVarChar, email);
-      // request.input('password', sql.NVarChar, hash);
-      // request.query(
-      //   `INSERT INTO user_data (username, email, password)
-      //   OUTPUT INSERTED.id
-      //   VALUES (@username, @email, @password)`,     
-      //   (error, results) => {
-      //     // console.log(results);
-      //     req.session.userId = results.recordset[0].id;
-      //     req.session.username = username;
-      //     res.redirect('/');
-      //   }
-      // );
       connection.query(
         'INSERT INTO user_data (username, email, password) VALUES (?, ?, ?)',
         [username, email, hash],
@@ -389,13 +362,12 @@ app.get('/login', (req, res) => {
   
 app.post('/login', (req, res) => {
     const email = req.body.email;
-    // const request = new sql.Request();
-    // request.input('email', sql.NVarChar, email);
+    
     connection.query(
       'SELECT * FROM user_data WHERE email = ?',
       [email],
       (error, results) => {
-
+    
         if (results.length > 0) {
           const plain = req.body.password;
           const hash = results[0].password;
@@ -417,11 +389,11 @@ app.post('/login', (req, res) => {
           })
   
         } else {
-          req.session.message = {
-            type: 'danger',
-            intro: 'Incorrect email/password! ',
-            message: 'Please make sure to insert the correct email and/or password.'
-          }
+            req.session.message = {
+                type: 'danger',
+                intro: 'Incorrect email/password! ',
+                message: 'Please make sure to insert the correct email and/or password.'
+            }
           res.redirect('/login');
         }
       }
@@ -435,14 +407,14 @@ app.get('/logout', (req, res) => {
 });
 
 app.get("/for-farmer", (req, res) => {
-  farmerID = 2;
+  farmerID = randomInt(1, 4);
   // console.log(farmerID);
-  connection.query('SELECT * FROM products where farmerID = ?',
+  connection.query('SELECT * FROM products where farmer_id = ?',
   [farmerID], (error, result) => {
-
-    // console.log(result);
-    res.render('farmer.ejs', { products : result });
-
+    connection.query('SELECT * FROM order_details WHERE product_id IN (SELECT id FROM products WHERE farmer_id = ?)', 
+    [farmerID], (error, result2) => {
+        res.render('farmer.ejs', { products : result, orders : result2 });  
+    })
   });
 })
 
