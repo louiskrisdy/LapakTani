@@ -105,7 +105,7 @@ app.get('/products', (req, res) => {
       if(!req.session.order_details) {
         req.session.order_details = [];
       }
-      connection.query('SELECT * FROM order_details', (error, result) => {
+      connection.query('SELECT * FROM order_details WHERE customer_id = ?',[req.session.userId], (error, result) => {
         if (error) {
           console.error('Failed to get order details', error);
           return res.status(500).send('Failed');
@@ -127,7 +127,7 @@ app.get('/products', (req, res) => {
       if(!req.session.order_details) {
         req.session.order_details = [];
       }
-      connection.query('SELECT * FROM order_details', (error, result) => {
+      connection.query('SELECT * FROM order_details WHERE customer_id = ?',[req.session.userId], (error, result) => {
         if (error) {
           console.error('Failed to get order details', error);
           return res.status(500).send('Failed');
@@ -169,10 +169,11 @@ app.get('/checkout', (req, res) => {
     for (let i = 0; i < req.session.cart.length; i++) {
       const cartItem = req.session.cart[i];
       const total_price = cartItem.product_price * cartItem.quantity;
+      const userID = req.session.userId;
 
       connection.query(
-        'INSERT INTO order_details (id, item_name, total_price, product_id, qty) VALUES (?, ?, ?, ?, ?)',
-        [req.session.orderID, cartItem.product_name, total_price, cartItem.product_id, cartItem.quantity],
+        'INSERT INTO order_details (id, item_name, total_price, product_id, qty, customer_id) VALUES (?, ?, ?, ?, ?, ?)',
+        [req.session.orderID, cartItem.product_name, total_price, cartItem.product_id, cartItem.quantity, userID],
         (error, result) => {
           if (error) {
             console.error('Failed to insert order details', error);
@@ -394,6 +395,7 @@ app.post('/login', (req, res) => {
       'SELECT * FROM user_data WHERE email = ?',
       [email],
       (error, results) => {
+
         if (results.length > 0) {
           const plain = req.body.password;
           const hash = results[0].password;
@@ -415,6 +417,11 @@ app.post('/login', (req, res) => {
           })
   
         } else {
+          req.session.message = {
+            type: 'danger',
+            intro: 'Incorrect email/password! ',
+            message: 'Please make sure to insert the correct email and/or password.'
+          }
           res.redirect('/login');
         }
       }
