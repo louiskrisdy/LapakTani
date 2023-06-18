@@ -568,6 +568,92 @@ form .form_control .input:valid + .label {
   margin-bottom: 5rem;
 }
 
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 3s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+.table-wrapper {
+  display: table;
+  width: 100%;
+}
+
+.table-row {
+  display: table-row;
+}
+
+.table-header,
+.table-cell {
+  display: table-cell;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.table-header {
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+.table-cell select {
+  margin-right: 8px;
+}
+
+.table-cell button {
+  padding: 4px 8px;
+}
+
+.card-body table {
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
+
 @media (max-width: 768px) {
 
   .nav-menu {
@@ -684,12 +770,6 @@ form .form_control .input:valid + .label {
     font-size: 0.7rem;
   }
   
-  .card-body table {
-    overflow-x: auto;
-    display: block;
-    white-space: nowrap;
-  }
-
   .table td .btn {
     font-size: 10px;
     padding: 5px 5px;
@@ -770,11 +850,6 @@ form .form_control .input:valid + .label {
     font-size: 11px;
   }
 
-  .card-body table {
-    overflow-x: auto;
-    display: block;
-    white-space: nowrap;
-  }
 }
 
 @media (max-width: 576px) {
@@ -866,12 +941,6 @@ form .form_control .input:valid + .label {
     font-size: 0.6rem;
   }
   
-  .card-body table {
-    overflow-x: auto;
-    display: block;
-    white-space: nowrap;
-  }
-
   .table td .btn {
     font-size: 10px;
     padding: 5px 5px;

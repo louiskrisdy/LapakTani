@@ -21,48 +21,23 @@
                     <div class="logo d-flex">
                         <h1 class="logo-header">LapakTani</h1>
                         <p style="font-style: italic;">for farmer</p>
-                    </div>
-            
-                    <!-- <div class="link-page-button d-flex flex-row">
-                        
-                        <div class="nav-link">
-                            <a href="/">Home</a>
-                        </div>
-                        <div class="nav-link">
-                            <a href="/products">Products</a>
-                        </div>
-                        <div class="nav-link">
-                            <a href="/aboutUs">About us</a>
-                        </div>
-                        
-                    </div> -->
-            
+                    </div>            
       
                     <ul class="nav-menu">
-                        <% if (locals.isLoggedIn) { %>
+                        <% if (locals.farmerLoggedIn) { %>
                             <li class="nav-item">
-                                <a class="nav-link" href="/404">Logout</a>
-                            </li>
-                          <% } else { %>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/404">Login</a>
+                                <a class="nav-link" href="/logoutFarmer">Logout</a>
                             </li>
                           <% } %>
                           
                     </ul>
-                    <div class="hamburger">
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                        <span class="bar"></span>
-                    </div>
-        
-        
+                
         </nav>
         
     </header>
 
 
-    <div class="container-fluid d-flex flex-row justify-content-around" style="border: 1px solid red;">
+    <div class="container-fluid justify-content-center align-content-center align-items-center text-center mt-4"" style="border: 1px solid red;">
         <div class="farmer-content-wrapper">
             <div class="mt-5 cart-header text-center">
                 <span>My Products List</span>
@@ -70,12 +45,13 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table" style="display:table">
                         <tr>
                             <th>Item ID</th>
                             <th>Item name</th>
                             <th>Qty</th>
                             <th>Price</th>
+                            <th>&nbsp;</th>
                         </tr>
                         <%
                             products.forEach(product => {
@@ -85,16 +61,34 @@
                             <td><%= product.name %></td>
                             <td><%= product.qty %></td>
                             <td><%= product.price %></td>
-                            <td>
-                                <a href="/edit/<%= product.id %>" class="btn btn-primary">Edit</a>
-                            </td>
+                            <td><a class="btn btn-primary btn-sm" href="#popupEdit/<%= product.id %>">Edit</a></td>
+                            <div id="popupEdit/<%= product.id %>" class="overlay" style="z-index: 5;">
+                                <div class="popup">
+                                    <h2>Item ID: <%= product.id %></h2>
+                                    <a class="close" href="#">&times;</a>
+                                    <div class="content">
+                                        <form method="POST" action="/update-product">
+                                            <input type="hidden" name="product_id" value="<%= product.id %>">
+                                            <div>
+                                              <label for="qty">Quantity:</label>
+                                              <input type="number" name="qty" id="qty" value="<%= product.qty %>">
+                                            </div>
+                                            <div>
+                                              <label for="price">Price:</label>
+                                              <input type="number" name="price" id="price" value="<%= product.price %>">
+                                            </div>
+                                            <button type="submit">Update</button>
+                                          </form>
+                                    </div>
+                                </div>
+                            </div>
                         </tr>
                         <%
                         })
                         %>
                     </table>
                 </div>
-                <form class="d-flex justify-content-around" method="POST" action="/add">
+                <form class="d-flex justify-content-around mb-5" method="POST" action="/add-product">
                     <input type="text" name="name" placeholder="Item name" required>
                     <input type="number" name="qty" placeholder="Qty" required>
                     <input type="number" name="price" placeholder="Price" required>
@@ -104,64 +98,123 @@
             </div>
         </div>
         <div class="wrapper">
-            <div class="mt-5 cart-header text-center">
+            <div class="cart-header text-center">
                 <span>Customer Order List</span>
                 <!-- <span class="fa fa-shopping-cart"></span> -->
             </div>
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table" style="display:table;">
                         <tr>
                             <th>Order ID</th>
                             <th>Item name</th>
                             <th>Qty</th>
-                            <th>Total price</th>
+                            <th>Total order price</th>
                             <th>Negotiation request</th>
                         </tr>
                         <%
-                            orders.forEach(order => {
-                        %>
-                        <tr>
-                            <td><%= order.id %></td>
-                            <td><%= order.item_name %></td>
-                            <td><%= order.qty %></td>
-                            <td><%= order.total_price %></td>
-                        </tr>
-                        <%
-                        })
-                        %>
+                        let previousOrderId = null; // Initialize previous order ID variable
+                        let rowspanCount = 1; // Initialize rowspan count
+                        let total = 0;
+                        let nego_order_id = null;
+                        let flag = 0;
+                        let numOfPopUp = 1;
+                        const last_index = orders.length - 1;
+                        orders.forEach((order, index) => {
+                            const nextOrder = orders[index + 1];
+                            %>
+                            <tr>
+                                <td><%= order.id %></td>
+                                <td><%= order.item_name %></td>
+                                <td><%= order.qty %></td>
+                                <td><%= order.total_price %></td>
+                                <%
+                                    total += parseFloat(order.total_price);
+                                    %>
+                                <% if (previousOrderId === order.id) { %>
+                                    <% rowspanCount++; %>
+                                <% } else { %>
+                                    <% if (flag === 0) { %> 
+                                        <td rowspan="<%= rowspanCount %>"><a class="btn btn-success btn-sm" href="#popup<%= numOfPopUp %>">View request</a></td>
+                                            <div id="popup<%= numOfPopUp %>" class="overlay">
+                                                <div class="popup">
+                                                  <h2>Order ID: <%= order.id %></h2>
+                                                  <a class="close" href="#">&times;</a>
+                                                  <div class="content">
+                                                    <div class="table-wrapper">
+                                                      <div class="table-row">
+                                                        <div class="table-header">Negotiation price</div>
+                                                        <div class="table-header">Negotiation status</div>
+                                                      </div>
+                                                      
+                                                      <% for(let i = 0; i < nego_details.length; i++) { %>
+                                                        <% if(nego_details[i].order_id === order.id) { %> 
+                                                            <div class="table-row">
+                                                                <div class="table-cell"><%= nego_details[i].nego_price %></div>
+                                                                <div class="table-cell">
+                                                                    <% if (nego_details[i].nego_status === "Pending") { %> 
+                                                                        <form action="/updateNegotiationStatus" method="POST">
+                                                                        <input type="hidden" name="negotiationID" value="<%= nego_details[i].order_id %>">
+                                                                        <select name="status" style="margin-bottom: 1rem;">
+                                                                            <option value="Pending">Pending</option>
+                                                                            <option value="Accepted">Accepted</option>
+                                                                            <option value="Rejected">Rejected</option>
+                                                                        </select>
+                                                                        <button type="submit">Update Status</button>
+                                                                        </form>
+                                                                    <% } else { %>
+                                                                        <button disabled="disabled"><%= nego_details[i].nego_status %></button>    
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                            <% break; %>
+                                                            <% } %>
+                                                        <% } %>
+                                                        </div>
+                                                  </div>
+                                                </div>
+                                              </div>  
+                                              <% flag = 1; numOfPopUp+= 1; %>                                        
+                                        <% } %>
+                                    <% previousOrderId = order.id; %>
+                                    <% rowspanCount = 1; %>
+                                <% } %>
+                            </tr>
+                            <% if (nextOrder && nextOrder.id !== order.id) { %>
+                                <tr>
+                                    <td colspan="3"><b>Total</b></td>
+                                    <td><%= total %></td>
+                                    <td>&nbsp;</td>
+
+                                </tr>
+                                <%
+                                total = 0;
+                                flag = 0;
+                                %>
+                            <% } %>
+                            <% if (index === last_index) { %>
+                                <tr>
+                                    <td colspan="3"><b>Total</b></td>
+                                    <td><%= total %></td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <%
+                                total = 0;
+                                %>
+                            <% } %>
+                        <% }) %>
                     </table>
+                    
                 </div>
                 <!-- end of  -->
             </div>
         </div>
     </div>
 
-    <div class="footer d-flex justify-content-center">
+    <!-- <div class="footer d-flex justify-content-center">
         <div class="text-dark align-items-center d-flex">
             © 2023 Copyright - LapakTani
         </div>
-    </div>
+    </div> -->
 </body>
 </html>
-
-<script>
-    const hamburger = document.querySelector(".hamburger");
-    const navMenu = document.querySelector(".nav-menu");
-
-    hamburger.addEventListener("click", mobileMenu);
-
-    function mobileMenu() {
-        hamburger.classList.toggle("active");
-        navMenu.classList.toggle("active");
-    }
-
-    const navLink = document.querySelectorAll(".nav-link");
-
-    navLink.forEach(n => n.addEventListener("click", closeMenu));
-
-    function closeMenu() {
-        hamburger.classList.remove("active");
-        navMenu.classList.remove("active");
-    }
-</script>
