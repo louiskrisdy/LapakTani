@@ -1,5 +1,5 @@
 # [LapakTani](https://lapaktani.site/)
-![landing page](https://i.ibb.co/7J8FhSb/Screenshot-2023-06-27-at-14-41-42.png)
+![landing page](public/images/landingpage.png)
 ## Prerequisites
 * Node.js installed on your machine.
 
